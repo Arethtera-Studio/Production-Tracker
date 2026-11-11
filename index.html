@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#18372f"><meta name="description" content="Personal production, profession, inventory and training tracker">
+  <link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="assets/icon-192.png">
+  <title>Production Tracker</title>
+  <style>
+    :root{--bg:#f4f6f3;--card:#fff;--ink:#17251f;--muted:#68776f;--line:#dfe6e0;--green:#1d6b4d;--green2:#e5f3eb;--red:#a33b36;--amber:#9b6814;--shadow:0 8px 24px rgba(20,45,34,.08)}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+    button,input,select,textarea{font:inherit}button{cursor:pointer}header{background:#18372f;color:white;padding:calc(14px + env(safe-area-inset-top)) 16px 16px;position:sticky;top:0;z-index:5;box-shadow:0 3px 14px #102a2230}
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:10px}.brand{font-weight:800;font-size:19px;letter-spacing:.2px}.subbrand{font-size:12px;color:#c8d9d0}.install{border:1px solid #7e9a8d;background:#294a3e;color:#fff;border-radius:20px;padding:7px 12px;font-size:12px}
+    main{max-width:760px;margin:0 auto;padding:16px}.view{display:none}.view.active{display:block}.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:4px 0 14px}.section-head h2{font-size:20px;margin:0}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted)}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);margin-bottom:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px}.stat .n{font-size:25px;font-weight:800;letter-spacing:-.5px}.stat .l{font-size:12px;color:var(--muted)}
+    .btn{border:0;border-radius:12px;padding:11px 14px;background:var(--green);color:#fff;font-weight:700}.btn.secondary{background:#e8efea;color:#214c3a}.btn.ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}.btn.danger{background:#f8e9e7;color:var(--red)}.btn.small{padding:7px 10px;font-size:13px}.btn:disabled{opacity:.45;cursor:not-allowed}
+    .monthbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}.monthbar strong{font-size:17px}.iconbtn{border:1px solid var(--line);background:#fff;border-radius:10px;width:38px;height:38px;font-size:19px;color:var(--ink)}
+    .calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.weekday{text-align:center;color:var(--muted);font-size:11px;padding:4px 0}.day{min-height:58px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);padding:7px 3px;display:flex;flex-direction:column;align-items:center;justify-content:space-between}.day.selected{border:2px solid var(--green);background:var(--green2);padding:6px 2px}.day .num{font-weight:750}.dots{display:flex;gap:3px;min-height:6px}.dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+    .time-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.time-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;min-height:110px}.time-title{font-weight:800;margin-bottom:7px}.action-row{border-top:1px solid #edf1ed;padding:8px 0;font-size:13px}.action-row:first-of-type{border-top:0}.action-title{font-weight:650}.pill{display:inline-flex;border-radius:99px;padding:3px 8px;background:#eef3ef;color:#365746;font-size:11px;font-weight:700}.pill.warn{background:#fff2d9;color:#80560e}.pill.red{background:#fae8e6;color:#963a35}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:10px}.profession{display:flex;align-items:center;gap:11px}.avatar{width:42px;height:42px;border-radius:12px;background:#eaf2ec;display:grid;place-items:center;font-size:21px}.profession h3{margin:0;font-size:15px}.profession p{margin:2px 0 0;color:var(--muted);font-size:12px}.progress{height:8px;background:#e8eee9;border-radius:99px;overflow:hidden;margin:8px 0 4px}.progress span{display:block;height:100%;background:#25845c;border-radius:99px}
+    .field{margin:10px 0}.field label{display:block;font-size:12px;font-weight:750;color:#42534a;margin-bottom:5px}.field input,.field select,.field textarea{width:100%;border:1px solid #d5ded7;border-radius:10px;padding:11px;background:#fff;color:var(--ink)}.field textarea{min-height:70px;resize:vertical}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.empty{padding:18px;text-align:center;color:var(--muted);font-size:13px}
+    .bottomnav{position:fixed;bottom:0;left:0;right:0;z-index:10;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:7px 5px calc(7px + env(safe-area-inset-bottom));box-shadow:0 -5px 20px #14291d12}.navbtn{border:0;background:none;color:#68776f;font-size:10px;padding:5px 1px;display:flex;flex-direction:column;align-items:center;gap:3px}.navbtn .ico{font-size:19px}.navbtn.active{color:var(--green);font-weight:800}
+    .modal{position:fixed;inset:0;background:#101d18a6;z-index:20;display:none;align-items:flex-end;justify-content:center;padding:12px}.modal.open{display:flex}.sheet{background:#fff;border-radius:20px 20px 14px 14px;width:min(100%,620px);max-height:92dvh;overflow:auto;padding:18px;box-shadow:0 15px 60px #0004}.sheet-head{display:flex;align-items:center;justify-content:space-between;gap:10px}.sheet-head h2{font-size:19px;margin:0}.close{border:0;background:#edf1ed;border-radius:50%;width:34px;height:34px;font-size:20px}
+    .rollbox{background:#18372f;color:#fff;border-radius:14px;padding:14px;margin:12px 0}.dicefaces{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.die{background:#fff;color:#18372f;border-radius:8px;min-width:34px;height:34px;display:grid;place-items:center;font-weight:900}.rolltotal{font-size:28px;font-weight:900}.notice{border-radius:12px;padding:10px 12px;background:#fff5df;color:#76520e;font-size:13px;margin:10px 0}.success{background:#e7f4eb;color:#205b3b}.historyitem{padding:10px 0;border-bottom:1px solid var(--line)}.historyitem:last-child{border:0}
+    @media(min-width:600px){.time-grid{grid-template-columns:repeat(4,1fr)}.day{min-height:68px}.modal{align-items:center}.sheet{border-radius:20px}}
+  </style>
+</head>
+<body>
+<header><div class="topline"><div><div class="brand">⚒ Production Tracker</div><div class="subbrand">Personal game production & progression</div></div><button class="install" id="installBtn">Install app</button></div></header>
+<main>
+  <section id="overviewView" class="view active">
+    <div class="section-head"><h2>Overview</h2><span class="tiny" id="saveState">Saved on this device</span></div>
+    <div class="stats" id="overviewStats"></div>
+    <div class="card"><div class="row"><strong>Current month</strong><button class="btn small secondary" onclick="showView('calendar')">Open calendar</button></div><div id="overviewMonth" class="muted" style="margin-top:8px"></div></div>
+    <div class="section-head"><h2>Profession status</h2><button class="btn small secondary" onclick="showView('professions')">Manage</button></div>
+    <div id="overviewProfessions"></div>
+    <div class="card"><strong>Rules currently applied</strong><ul class="tiny" style="padding-left:18px;margin-bottom:0"><li>35 days per month; Morning, Mid-Day, Evening and Night.</li><li>2d6 / 3d6 / 4d6 / 6d6 by proficiency.</li><li>Supplier inventory caps buyer output; no stock means no work.</li><li>TP accumulates permanently: 0–99 Un-Skilled, 100–399 Skilled, 400–999 Expert, 1,000+ Master.</li></ul></div>
+  </section>
+  <section id="calendarView" class="view">
+    <div class="section-head"><h2>35-day calendar</h2><span class="pill">4 timeframes/day</span></div>
+    <div class="card">
+      <div class="monthbar"><button class="iconbtn" id="prevMonth">‹</button><strong id="monthLabel">Month 1</strong><button class="iconbtn" id="nextMonth">›</button></div>
+      <div class="calendar" id="calendarGrid"></div>
+    </div>
+    <div class="section-head"><h2 id="selectedDayTitle">Day 1</h2><span class="tiny">Select a timeframe to add an action</span></div>
+    <div class="time-grid" id="timeGrid"></div>
+  </section>
+  <section id="professionsView" class="view">
+    <div class="section-head"><h2>Professions</h2><button class="btn small" id="addProfessionBtn">＋ Add</button></div>
+    <div id="professionList"></div>
+  </section>
+  <section id="diceView" class="view">
+    <div class="section-head"><h2>Dice roller</h2><span class="pill">Roll history</span></div>
+    <div class="card">
+      <div class="formgrid"><div class="field"><label>Number of dice</label><input id="manualDiceCount" type="number" min="1" max="100" value="2"></div><div class="field"><label>Die type</label><select id="manualDiceSides"><option>4</option><option selected>6</option><option>8</option><option>10</option><option>12</option><option>20</option><option>100</option></select></div></div>
+      <div class="field"><label>Modifier (+ / −)</label><input id="manualModifier" type="number" value="0"></div>
+      <button class="btn" id="manualRollBtn" style="width:100%">🎲 Roll dice</button>
+      <div id="manualRollResult"></div>
+    </div>
+    <div class="section-head"><h2>Recent rolls</h2><button class="btn small ghost" id="clearRollsBtn">Clear</button></div><div class="card" id="rollHistory"></div>
+  </section>
+  <section id="historyView" class="view">
+    <div class="section-head"><h2>Activity & reports</h2><span class="pill">All months</span></div>
+    <div class="card" id="historySummary"></div>
+    <div class="section-head"><h2>Recent actions</h2></div><div class="card" id="actionHistory"></div>
+    <div class="card"><strong>Backup & restore</strong><p class="tiny">Export a backup file regularly. Your records are stored in this browser on this device.</p><div class="actions"><button class="btn secondary" id="exportBtn">Export backup</button><button class="btn ghost" id="importBtn">Import backup</button><input type="file" id="importFile" accept="application/json" hidden></div></div>
+  </section>
+</main>
+<nav class="bottomnav"><button class="navbtn active" data-view="overview"><span class="ico">⌂</span>Home</button><button class="navbtn" data-view="calendar"><span class="ico">▦</span>Calendar</button><button class="navbtn" data-view="professions"><span class="ico">⚒</span>Professions</button><button class="navbtn" data-view="dice"><span class="ico">🎲</span>Dice</button><button class="navbtn" data-view="history"><span class="ico">▤</span>History</button></nav>
+<div class="modal" id="actionModal"><div class="sheet"><div class="sheet-head"><h2 id="actionModalTitle">Add action</h2><button class="close" data-close="actionModal">×</button></div><div id="actionModalBody"></div></div></div>
+<div class="modal" id="professionModal"><div class="sheet"><div class="sheet-head"><h2 id="professionModalTitle">Add profession</h2><button class="close" data-close="professionModal">×</button></div><div id="professionModalBody"></div></div></div>
+<div class="modal" id="detailModal"><div class="sheet"><div class="sheet-head"><h2 id="detailModalTitle">Profession</h2><button class="close" data-close="detailModal">×</button></div><div id="detailModalBody"></div></div></div>
+<script src="app.js"></script>
+</body></html>
